@@ -1,0 +1,10 @@
+<component name="ProjectRunConfigurationManager">
+  <configuration default="false" name="Testing Perc" type="Application" factoryName="Application">
+    <option name="MAIN_CLASS_NAME" value="weekonepercolation.PercolationStats" />
+    <module name="princeton-algorithms" />
+    <option name="PROGRAM_PARAMETERS" value="5 10" />
+    <method v="2">
+      <option name="Make" enabled="true" />
+    </method>
+  </configuration>
+</component>
