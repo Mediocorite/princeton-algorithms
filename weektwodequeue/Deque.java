@@ -1,32 +1,135 @@
+package weektwodequeue;
+
+import java.util.Iterator;
+import java.util.NoSuchElementException;
+
 public class Deque<Item> implements Iterable<Item> {
+    private Item[] circularArr;
+    private int size = 0, first = 0, last = 0;
 
-    
+    public Deque() {
+        circularArr = (Item[]) new Object[2];
+    }
 
-    // construct an empty deque
-    public Deque()
+    public boolean isEmpty() {
+        return size == 0;
+    }
 
-    // is the deque empty?
-    public boolean isEmpty()
+    public int size() {
+        return size;
+    }
 
-    // return the number of items on the deque
-    public int size()
+    private void resize(int capacity) {
+        Item[] copy = (Item[]) new Object[capacity];
+        for (int i = 0; i < size; i++) {
+            copy[i] = circularArr[(first + i) % circularArr.length];
+        }
+        first = 0;
+        last = size;
+        circularArr = copy;
+    }
 
-    // add the item to the front
-    public void addFirst(Item item)
+    public void addFirst(Item item) {
+        if (item == null) {
+            throw new IllegalArgumentException("Item cannot be null");
+        }
+        if (size == circularArr.length) {
+            resize(2 * circularArr.length);
+        }
+        first = (first - 1 + circularArr.length) % circularArr.length;
+        circularArr[first] = item;
+        size++;
+    }
 
-    // add the item to the back
-    public void addLast(Item item)
+    public void addLast(Item item) {
+        if (item == null) {
+            throw new IllegalArgumentException("Item cannot be null");
+        }
+        if (size == circularArr.length) {
+            resize(2 * circularArr.length);
+        }
+        circularArr[last] = item;
+        last = (last + 1) % circularArr.length;
+        size++;
+    }
 
-    // remove and return the item from the front
-    public Item removeFirst()
+    public Item removeFirst() {
+        if (isEmpty()) {
+            throw new NoSuchElementException("Deque is empty");
+        }
+        Item item = circularArr[first];
+        circularArr[first] = null;
+        first = (first + 1) % circularArr.length;
+        size--;
+        if (size > 0 && size == circularArr.length / 4) {
+            resize(circularArr.length / 2);
+        }
+        return item;
+    }
 
-    // remove and return the item from the back
-    public Item removeLast()
+    public Item removeLast() {
+        if (isEmpty()) {
+            throw new NoSuchElementException("Deque is empty");
+        }
+        last = (last - 1 + circularArr.length) % circularArr.length;
+        Item item = circularArr[last];
+        circularArr[last] = null;
+        size--;
+        if (size > 0 && size == circularArr.length / 4) {
+            resize(circularArr.length / 2);
+        }
+        return item;
+    }
 
-    // return an iterator over items in order from front to back
-    public Iterator<Item> iterator()
+    public Iterator<Item> iterator() {
+        return new DequeIterator();
+    }
 
-    // unit testing (required)
-    public static void main(String[] args)
+    private class DequeIterator implements Iterator<Item> {
+        private int current = first;
+        private int count = 0;
 
+        public boolean hasNext() {
+            return count < size;
+        }
+
+        public Item next() {
+            if (!hasNext()) {
+                throw new NoSuchElementException("No more items to return");
+            }
+            Item item = circularArr[current];
+            current = (current + 1) % circularArr.length;
+            count++;
+            return item;
+        }
+
+        public void remove() {
+            throw new UnsupportedOperationException("Remove operation is not supported");
+        }
+    }
+
+    public static void main(String[] args) {
+        Deque<Integer> deque = new Deque<>();
+        System.out.println("Is empty: " + deque.isEmpty());
+
+        deque.addFirst(1);
+        deque.addLast(2);
+        deque.addFirst(0);
+        deque.addLast(3);
+
+        System.out.println("Size: " + deque.size());
+
+        for (int item : deque) {
+            System.out.print(item + " ");
+        }
+        System.out.println();
+
+        System.out.println("Removed from front: " + deque.removeFirst());
+        System.out.println("Removed from back: " + deque.removeLast());
+
+        for (int item : deque) {
+            System.out.print(item + " ");
+        }
+        System.out.println();
+    }
 }
