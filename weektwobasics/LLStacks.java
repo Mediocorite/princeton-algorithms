@@ -34,7 +34,7 @@ public class LLStacks<Item> {
     }
 
     public static void main(String[] args) {
-        LLStacks stack = new LLStacks();
+        LLStacks<String> stack = new LLStacks<>();
         while(!StdIn.isEmpty()) {
             String item = StdIn.readString();
             stack.push(item);
